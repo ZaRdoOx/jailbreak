@@ -1,0 +1,41 @@
+local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))()
+
+local X = Material.Load({
+    Title = "Jailbreak Guns",
+    Style = 3,
+    SizeX = 500,
+    SizeY = 350,
+    Theme = "Dark",
+})
+
+local WeaponConfigs = game:GetService("ReplicatedStorage").Game.ItemConfig:GetChildren()
+for Idx, Module in next, WeaponConfigs do
+    if Module:IsA("ModuleScript") then
+        local Y = X.New({
+            Title = Module.Name
+        })
+        local __req = require(Module)
+        for k,v in next, __req do
+            if typeof(v) == "number" then
+                Y.Slider({
+                    Text = tostring(k),
+                    Callback = function(Value)
+                        __req[k] = Value or v
+                    end,
+                    Min = math.floor(v / 5),
+                    Max = math.floor(v * 5),
+                    Def = v
+                })
+            elseif typeof(v) == "boolean" then
+                Y.Toggle({
+                    Text = tostring(k),
+                    Callback = function(Value)
+                        __req[k] = Value or v
+                    end,
+                    Enabled = v
+                })
+            end
+        end
+    end
+    if Idx == 10 then break end
+end
